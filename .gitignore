@@ -1,0 +1,27 @@
+##########################
+# Unreal Generated Files #
+##########################
+*/Binaries
+*/Build
+*/DerivedDataCache
+*/Intermediate
+*/Platforms
+*/Saved
+*/Script
+
+########################
+# Marketplace Packages #
+########################
+**/Content/Stylized_Egypt
+
+###############
+# Large Files #
+###############
+YMPoker/Content/_Game/Maps/EgyptLevel_BuiltData.uasset
+
+#######################
+# Visual studio Files #
+#######################
+*/.vs
+YMPoker/.vsconfig
+YMPoker/YMPoker.sln

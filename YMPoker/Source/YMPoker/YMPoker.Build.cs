@@ -9,7 +9,8 @@ public class YMPoker : ModuleRules
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore",
-			"LibOVRPlatform", "OnlineSubsystemOculus", "OnlineSubsystem", "HeadMountedDisplay", "EnhancedInput" });
+			"LibOVRPlatform", "OnlineSubsystemOculus", "OnlineSubsystem", "HeadMountedDisplay", 
+			"EnhancedInput", "NavigationSystem" });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 

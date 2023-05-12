@@ -7,6 +7,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "HeadMountedDisplayFunctionLibrary.h"
 #include "Components/CapsuleComponent.h"
+#include "NavigationSystem.h"
 
 AVRCharacter::AVRCharacter()
 {
@@ -23,6 +24,7 @@ AVRCharacter::AVRCharacter()
 
 	MaxTeleportDistance = 1000.f;
 	TeleportFadeTime = 1.f;
+	TeleportProjectionExtent = FVector(100.f, 100.f, 100.f);
 }
 
 void AVRCharacter::BeginPlay()
@@ -52,16 +54,13 @@ void AVRCharacter::BeginTeleport()
 
 void AVRCharacter::UpdateDestinationMarker()
 {
-	FVector Start = Camera->GetComponentLocation();
-	FVector End = Start + Camera->GetForwardVector() * MaxTeleportDistance;
+	FVector Location;
+	bool bHasDestination = FindTeleportDestination(Location);
 
-	FHitResult HitResult;
-	bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility);
-
-	if (bHit)
+	if (bHasDestination)
 	{
 		DestinationMarker->SetVisibility(true);
-		DestinationMarker->SetWorldLocation(HitResult.Location);
+		DestinationMarker->SetWorldLocation(Location);
 	}
 	else
 	{
@@ -84,6 +83,30 @@ void AVRCharacter::StartFade(float FromAlpha, float ToAlpha)
 	{
 		PC->PlayerCameraManager->StartCameraFade(FromAlpha, ToAlpha, TeleportFadeTime, FLinearColor::Black);
 	}
+}
+
+bool AVRCharacter::FindTeleportDestination(FVector& OutLocation)
+{
+	FVector Start = Camera->GetComponentLocation();
+	FVector End = Start + Camera->GetForwardVector() * MaxTeleportDistance;
+
+	FHitResult HitResult;
+	bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility);
+
+	if (!bHit) return false;
+
+	FNavLocation NavLocation;
+	bool bOnNavMesh = UNavigationSystemV1::GetCurrent(GetWorld())->ProjectPointToNavigation(
+		HitResult.Location,
+		NavLocation,
+		TeleportProjectionExtent
+	);
+
+	if (!bOnNavMesh) return false;
+
+	OutLocation = NavLocation.Location;
+
+	return true;
 }
 
 void AVRCharacter::Tick(float DeltaTime)

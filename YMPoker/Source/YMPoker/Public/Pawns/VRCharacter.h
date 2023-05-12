@@ -51,4 +51,9 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	float TeleportFadeTime;
+
+	bool FindTeleportDestination(FVector& OutLocation);
+
+	UPROPERTY(EditAnywhere)
+	FVector TeleportProjectionExtent;
 };

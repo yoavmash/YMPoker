@@ -4,11 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
+#include "InputActionValue.h"
 #include "VRPawn.generated.h"
 
 class UCameraComponent;
 class UMotionControllerComponent;
 class AStaticHands;
+class UInputMappingContext;
+class UInputAction;
 
 UCLASS()
 class YMPOKER_API AVRPawn : public APawn
@@ -23,6 +26,7 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+	void Turn(const FInputActionValue& Value);
 	void SetupHands();
 
 private:	
@@ -43,5 +47,14 @@ private:
 
 	TObjectPtr<AStaticHands> StaticRightHandsRef;
 	TObjectPtr<AStaticHands> StaticLeftHandsRef;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UInputMappingContext> DefaultMappingContext;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UInputAction> TurnAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	float SnapTurnDegrees;
 
 };

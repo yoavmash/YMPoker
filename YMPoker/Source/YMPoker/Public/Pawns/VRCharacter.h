@@ -7,6 +7,8 @@
 #include "VRCharacter.generated.h"
 
 class UCameraComponent;
+class UInputMappingContext;
+class UInputAction;
 
 UCLASS()
 class YMPOKER_API AVRCharacter : public ACharacter
@@ -20,6 +22,8 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+
+	void BeginTeleport();
 
 private:	
 	UPROPERTY(VisibleAnywhere)
@@ -35,4 +39,10 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	float MaxTeleportDistance;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UInputMappingContext> DefaultMappingContext;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UInputAction> TeleportAction;
 };

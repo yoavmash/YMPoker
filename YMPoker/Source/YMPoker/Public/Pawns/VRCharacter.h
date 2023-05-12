@@ -45,4 +45,10 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UInputAction> TeleportAction;
+
+	void FinishTeleport();
+	void StartFade(float FromAlpha, float ToAlpha);
+
+	UPROPERTY(EditAnywhere)
+	float TeleportFadeTime;
 };

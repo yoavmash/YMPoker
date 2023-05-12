@@ -6,6 +6,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "HeadMountedDisplayFunctionLibrary.h"
+#include "Components/CapsuleComponent.h"
 
 AVRCharacter::AVRCharacter()
 {
@@ -21,6 +22,7 @@ AVRCharacter::AVRCharacter()
 	DestinationMarker->SetupAttachment(GetRootComponent());
 
 	MaxTeleportDistance = 1000.f;
+	TeleportFadeTime = 1.f;
 }
 
 void AVRCharacter::BeginPlay()
@@ -43,7 +45,9 @@ void AVRCharacter::BeginPlay()
 
 void AVRCharacter::BeginTeleport()
 {
-	SetActorLocation(DestinationMarker->GetComponentLocation());
+	StartFade(0.f, 1.f);
+	FTimerHandle Handle;
+	GetWorldTimerManager().SetTimer(Handle, this, &AVRCharacter::FinishTeleport, TeleportFadeTime);
 }
 
 void AVRCharacter::UpdateDestinationMarker()
@@ -65,6 +69,23 @@ void AVRCharacter::UpdateDestinationMarker()
 	}
 }
 
+void AVRCharacter::FinishTeleport()
+{
+	FVector Destination = DestinationMarker->GetComponentLocation();
+	Destination += GetCapsuleComponent()->GetScaledCapsuleHalfHeight() * GetActorUpVector();
+	SetActorLocation(Destination);
+	StartFade(1.f, 0.f);
+}
+
+void AVRCharacter::StartFade(float FromAlpha, float ToAlpha)
+{
+	TObjectPtr<APlayerController> PC = Cast<APlayerController>(GetController());
+	if (PC != nullptr)
+	{
+		PC->PlayerCameraManager->StartCameraFade(FromAlpha, ToAlpha, TeleportFadeTime, FLinearColor::Black);
+	}
+}
+
 void AVRCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -81,8 +102,9 @@ void AVRCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent)) {
-		EnhancedInputComponent->BindAction(TeleportAction, ETriggerEvent::Triggered, this, &AVRCharacter::BeginTeleport);
+	if (TObjectPtr<UEnhancedInputComponent> EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent)) {
+		EnhancedInputComponent->BindAction(TeleportAction, ETriggerEvent::Started, this, &AVRCharacter::BeginTeleport);
 	}
 }
+
 

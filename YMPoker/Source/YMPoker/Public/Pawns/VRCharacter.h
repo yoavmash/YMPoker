@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "InputActionValue.h"
 #include "VRCharacter.generated.h"
 
 class UCameraComponent;
@@ -24,6 +25,7 @@ protected:
 	virtual void BeginPlay() override;
 
 	void BeginTeleport();
+	void Move(const FInputActionValue& Value);
 
 private:	
 	UPROPERTY(VisibleAnywhere)
@@ -45,6 +47,9 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UInputAction> TeleportAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UInputAction> MoveAction;
 
 	void FinishTeleport();
 	void StartFade(float FromAlpha, float ToAlpha);
